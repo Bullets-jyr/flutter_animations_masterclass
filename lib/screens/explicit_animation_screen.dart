@@ -31,7 +31,13 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
   late final AnimationController _animationController = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 10),
+    lowerBound: 50.0,
+    upperBound: 100.0,
   );
+    // ..addListener(() {
+    //   // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
+    //   setState(() {});
+    // });
 
   @override
   void initState() {
@@ -61,6 +67,7 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
 
   @override
   Widget build(BuildContext context) {
+    print('build');
     return Scaffold(
       appBar: AppBar(
         title: Text('Explicit Animations'),
@@ -69,11 +76,24 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              '${_animationController.value}',
-              style: TextStyle(
-                fontSize: 58,
-              ),
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return Opacity(
+                  opacity: _animationController.value,
+                  child: Container(
+                    color: Colors.amber,
+                    width: 400,
+                    height: 400,
+                  ),
+                );
+                // return Text(
+                //   '${_animationController.value}',
+                //   style: TextStyle(
+                //     fontSize: 58,
+                //   ),
+                // );
+              },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
