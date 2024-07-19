@@ -34,14 +34,44 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     // lowerBound: 50.0,
     // upperBound: 100.0,
   );
-    // ..addListener(() {
-    //   // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
-    //   setState(() {});
-    // });
 
-  late final Animation<Color?> _color = ColorTween(
-    begin: Colors.amber,
-    end: Colors.red,
+  // ..addListener(() {
+  //   // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
+  //   setState(() {});
+  // });
+
+  // late final Animation<Color?> _color = ColorTween(
+  //   begin: Colors.amber,
+  //   end: Colors.red,
+  // ).animate(_animationController);
+
+  late final Animation<Decoration> _decoration = DecorationTween(
+    begin: BoxDecoration(
+      color: Colors.amber,
+      borderRadius: BorderRadius.circular(20),
+    ),
+    end: BoxDecoration(
+      color: Colors.red,
+      borderRadius: BorderRadius.circular(120),
+    ),
+  ).animate(_animationController);
+
+  late final Animation<double> _rotation = Tween(
+    begin: 0.0,
+    end: 2.0,
+  ).animate(_animationController);
+
+  late final Animation<double> _scale = Tween(
+    begin: 1.0,
+    end: 1.1,
+  ).animate(_animationController);
+
+  late final Animation<Offset> _position = Tween(
+    begin: Offset.zero,
+    // -1: 100퍼센트
+    // end: Offset(0, -1),
+    // end: Offset(0, -0.5),
+    end: Offset(0, -0.2),
   ).animate(_animationController);
 
   @override
@@ -56,6 +86,12 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     Timer.periodic(const Duration(milliseconds: 500), (timer) {
       print(_animationController.value);
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   void _play() {
@@ -81,32 +117,53 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // tween: 트윈을 사용하면 애니메이션 대상의 시작과 끝을 지정할 수 있어
-            AnimatedBuilder(
-              // animation: _animationController,
-              animation: _color,
-              builder: (context, child) {
-                return Container(
-                  color: _color.value,
-                  width: 400,
-                  height: 400,
-                );
-                // return Opacity(
-                //   opacity: _animationController.value,
-                //   child: Container(
-                //     color: Colors.amber,
-                //     width: 400,
-                //     height: 400,
-                //   ),
-                // );
-                // return Text(
-                //   '${_animationController.value}',
-                //   style: TextStyle(
-                //     fontSize: 58,
-                //   ),
-                // );
-              },
+            SlideTransition(
+              position: _position,
+              child: ScaleTransition(
+                scale: _scale,
+                child: RotationTransition(
+                  turns: _rotation,
+                  child: DecoratedBoxTransition(
+                    decoration: _decoration,
+                    child: const SizedBox(
+                      height: 300,
+                      width: 300,
+                    ),
+                  ),
+                ),
+              ),
             ),
+            const SizedBox(
+              height: 50,
+            ),
+            // tween: 트윈을 사용하면 애니메이션 대상의 시작과 끝을 지정할 수 있어
+            // AnimatedBuilder는 최후의 수단으로 사용해야해, explicit(명시적) 애니메이션을 사용한 경우에 말야
+            // xxxTransition: Transition으로 끝나는건 explicit 애니메이션이야. 알겠지?
+            // AnimatedBuilder(
+            //   // animation: _animationController,
+            //   animation: _color,
+            //   builder: (context, child) {
+            //     return Container(
+            //       color: _color.value,
+            //       width: 400,
+            //       height: 400,
+            //     );
+            //     // return Opacity(
+            //     //   opacity: _animationController.value,
+            //     //   child: Container(
+            //     //     color: Colors.amber,
+            //     //     width: 400,
+            //     //     height: 400,
+            //     //   ),
+            //     // );
+            //     // return Text(
+            //     //   '${_animationController.value}',
+            //     //   style: TextStyle(
+            //     //     fontSize: 58,
+            //     //   ),
+            //     // );
+            //   },
+            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
