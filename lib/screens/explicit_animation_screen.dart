@@ -33,6 +33,7 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     duration: const Duration(seconds: 2),
     // lowerBound: 50.0,
     // upperBound: 100.0,
+    reverseDuration: const Duration(seconds: 1),
   );
 
   // ..addListener(() {
@@ -54,17 +55,17 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
       color: Colors.red,
       borderRadius: BorderRadius.circular(120),
     ),
-  ).animate(_animationController);
+  ).animate(_curved);
 
   late final Animation<double> _rotation = Tween(
     begin: 0.0,
-    end: 2.0,
-  ).animate(_animationController);
+    end: 0.5,
+  ).animate(_curved);
 
   late final Animation<double> _scale = Tween(
     begin: 1.0,
     end: 1.1,
-  ).animate(_animationController);
+  ).animate(_curved);
 
   late final Animation<Offset> _position = Tween(
     begin: Offset.zero,
@@ -72,7 +73,13 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     // end: Offset(0, -1),
     // end: Offset(0, -0.5),
     end: Offset(0, -0.2),
-  ).animate(_animationController);
+  ).animate(_curved);
+
+  late final CurvedAnimation _curved = CurvedAnimation(
+    parent: _animationController,
+    curve: Curves.elasticOut,
+    reverseCurve: Curves.bounceIn,
+  );
 
   @override
   void initState() {
