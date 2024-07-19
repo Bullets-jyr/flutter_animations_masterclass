@@ -30,14 +30,19 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
   // 우리의 애니메이션 컨트롤러는 ticker에 연결되어 있어, 알았지?
   late final AnimationController _animationController = AnimationController(
     vsync: this,
-    duration: const Duration(seconds: 10),
-    lowerBound: 50.0,
-    upperBound: 100.0,
+    duration: const Duration(seconds: 2),
+    // lowerBound: 50.0,
+    // upperBound: 100.0,
   );
     // ..addListener(() {
     //   // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
     //   setState(() {});
     // });
+
+  late final Animation<Color?> _color = ColorTween(
+    begin: Colors.amber,
+    end: Colors.red,
+  ).animate(_animationController);
 
   @override
   void initState() {
@@ -76,17 +81,24 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // tween: 트윈을 사용하면 애니메이션 대상의 시작과 끝을 지정할 수 있어
             AnimatedBuilder(
-              animation: _animationController,
+              // animation: _animationController,
+              animation: _color,
               builder: (context, child) {
-                return Opacity(
-                  opacity: _animationController.value,
-                  child: Container(
-                    color: Colors.amber,
-                    width: 400,
-                    height: 400,
-                  ),
+                return Container(
+                  color: _color.value,
+                  width: 400,
+                  height: 400,
                 );
+                // return Opacity(
+                //   opacity: _animationController.value,
+                //   child: Container(
+                //     color: Colors.amber,
+                //     width: 400,
+                //     height: 400,
+                //   ),
+                // );
                 // return Text(
                 //   '${_animationController.value}',
                 //   style: TextStyle(
