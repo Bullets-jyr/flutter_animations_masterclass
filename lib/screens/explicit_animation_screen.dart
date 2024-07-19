@@ -34,12 +34,13 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     // lowerBound: 50.0,
     // upperBound: 100.0,
     reverseDuration: const Duration(seconds: 1),
-  );
-
-  // ..addListener(() {
-  //   // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
-  //   setState(() {});
-  // });
+  )..addListener(() {
+      // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
+      setState(() {
+        // _value = _animationController.value;
+        _range.value = _animationController.value;
+      });
+    });
 
   // late final Animation<Color?> _color = ColorTween(
   //   begin: Colors.amber,
@@ -95,12 +96,6 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     });
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
   void _play() {
     _animationController.forward();
   }
@@ -111,6 +106,25 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
 
   void _rewind() {
     _animationController.reverse();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  // double _value = 0;
+  // ValueNotifier 값을 가지고 있는 역할을 해, 알겠지?
+  final ValueNotifier<double> _range = ValueNotifier(0.0);
+
+  void _onChanged(double value) {
+    // setState(() {
+    //   _value = value;
+    // });
+    _range.value = 0;
+    _animationController.value = value;
+    // _animationController.animateTo(value);
   }
 
   @override
@@ -193,6 +207,22 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
                   ),
                 ),
               ],
+            ),
+            const SizedBox(
+              height: 25,
+            ),
+            // Slider(
+            //   value: _value.value,
+            //   onChanged: _onChanged,
+            // ),
+            ValueListenableBuilder(
+              valueListenable: _range,
+              builder: (context, value, child) {
+                return Slider(
+                  value: _range.value,
+                  onChanged: _onChanged,
+                );
+              },
             ),
           ],
         ),
