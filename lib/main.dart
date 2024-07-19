@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Animations Masterclass',
       theme: ThemeData(
+        // Material 3 Design
         useMaterial3: true,
         colorScheme: const ColorScheme.light(
           primary: Colors.blue,
