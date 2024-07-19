@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -26,8 +28,10 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
   // ticker때문에 우리는 이런 코드들을 쓴 거야
   // 애니메이션 컨트롤러는 인스턴스화된 후 초기화되면서 vsync의 createTicker를 실행해.
   // 우리의 애니메이션 컨트롤러는 ticker에 연결되어 있어, 알았지?
-  late final AnimationController _animationController =
-      AnimationController(vsync: this);
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 10),
+  );
 
   @override
   void initState() {
@@ -38,6 +42,21 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     // Ticker(
     //   (elapsed) => print(elapsed),
     // ).start();
+    Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      print(_animationController.value);
+    });
+  }
+
+  void _play() {
+    _animationController.forward();
+  }
+
+  void _pause() {
+    _animationController.stop();
+  }
+
+  void _rewind() {
+    _animationController.reverse();
   }
 
   @override
@@ -45,6 +64,42 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text('Explicit Animations'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '${_animationController.value}',
+              style: TextStyle(
+                fontSize: 58,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _play,
+                  child: Text(
+                    'Play',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: _pause,
+                  child: Text(
+                    'Pause',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: _rewind,
+                  child: Text(
+                    'Rewind',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
