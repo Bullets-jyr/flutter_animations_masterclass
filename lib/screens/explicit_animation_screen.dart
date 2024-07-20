@@ -28,19 +28,29 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
   // ticker때문에 우리는 이런 코드들을 쓴 거야
   // 애니메이션 컨트롤러는 인스턴스화된 후 초기화되면서 vsync의 createTicker를 실행해.
   // 우리의 애니메이션 컨트롤러는 ticker에 연결되어 있어, 알았지?
+  // ..: Cascade notation 이야
   late final AnimationController _animationController = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 2),
     // lowerBound: 50.0,
     // upperBound: 100.0,
     reverseDuration: const Duration(seconds: 1),
-  )..addListener(() {
+  )
+    ..addListener(() {
       // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
-      setState(() {
-        // _value = _animationController.value;
-        _range.value = _animationController.value;
-      });
+      // setState(() {
+      //   _value = _animationController.value;
+      // });
+      _range.value = _animationController.value;
     });
+    // ..addStatusListener((status) {
+    //   print(status);
+    //   if (status == AnimationStatus.completed) {
+    //     _animationController.reverse();
+    //   } else if (status == AnimationStatus.dismissed) {
+    //     _animationController.forward();
+    //   }
+    // });
 
   // late final Animation<Color?> _color = ColorTween(
   //   begin: Colors.amber,
@@ -127,6 +137,21 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     // _animationController.animateTo(value);
   }
 
+  bool _looping = false;
+
+  void _toggleLooping() {
+    if (_looping) {
+      _animationController.stop();
+    } else {
+      _animationController.repeat(
+        reverse: true,
+      );
+    }
+    setState(() {
+      _looping = !_looping;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     print('build');
@@ -204,6 +229,12 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
                   onPressed: _rewind,
                   child: Text(
                     'Rewind',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: _toggleLooping,
+                  child: Text(
+                    _looping ? 'Stop looping' : 'Start looping',
                   ),
                 ),
               ],
