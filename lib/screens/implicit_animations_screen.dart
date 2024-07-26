@@ -63,7 +63,7 @@ class _ImplicitAnimationsScreenState extends State<ImplicitAnimationsScreen> {
               // tween: Tween(begin: 10.0, end: 20.0),
               // tween: Tween(begin: 10.0, end: 20.0),
               tween: ColorTween(
-                begin: Colors.blue,
+                begin: Colors.yellow,
                 end: Colors.red,
               ),
               curve: Curves.bounceInOut,

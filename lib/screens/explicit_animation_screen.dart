@@ -32,12 +32,14 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
   late final AnimationController _animationController = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 2),
+    // 0.0에 시작해서 1.0에서 끝나는데, 원한다면 이 값을 수정할 수 있어
     // lowerBound: 50.0,
     // upperBound: 100.0,
     reverseDuration: const Duration(seconds: 1),
   )
     ..addListener(() {
       // 이건 매번 컨트롤러의 값이 바뀔 때마다 함수를 실행할 거야
+      // setState(() {});
       // setState(() {
       //   _value = _animationController.value;
       // });
@@ -57,6 +59,7 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
   //   end: Colors.red,
   // ).animate(_animationController);
 
+  // BoxDecoration
   late final Animation<Decoration> _decoration = DecorationTween(
     begin: BoxDecoration(
       color: Colors.amber,
@@ -86,6 +89,10 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     end: Offset(0, -0.2),
   ).animate(_curved);
 
+  // CurvedAnimation
+  // 물론 여기에서 late를 쓰지 않고 애니메이션 컨트롤러를 쓸 수 없어
+  // 속성을 초기화할 때 this를 쓸거면 late를 사용해야 하기 때문이야 (vsync: this,)
+  // late인 애니메이션 컨트롤러를 사용하면 이를 사용하는 모든 것에서 late를 써야 해
   late final CurvedAnimation _curved = CurvedAnimation(
     parent: _animationController,
     curve: Curves.elasticOut,
@@ -98,12 +105,13 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
     super.initState();
     // Calls its callback once per animation frame.
     // 애니메이션 컨트롤러가 ticker에 연결되기 때문이야.
+    // 애니메이션 컨트롤러는 가능한 한 빨리 실행되어야 하거든
     // Ticker(
     //   (elapsed) => print(elapsed),
     // ).start();
-    Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      print(_animationController.value);
-    });
+    // Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    //   print(_animationController.value);
+    // });
   }
 
   void _play() {
@@ -126,15 +134,17 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
 
   // double _value = 0;
   // ValueNotifier 값을 가지고 있는 역할을 해, 알겠지?
+  // 우린 화면을 다시 build, rendering하지 않고 이 값을 수정할 수 있게 돼
   final ValueNotifier<double> _range = ValueNotifier(0.0);
 
   void _onChanged(double value) {
     // setState(() {
     //   _value = value;
     // });
+    // _animationController.value = value;
+    // _animationController.animateTo(value);
     _range.value = 0;
     _animationController.value = value;
-    // _animationController.animateTo(value);
   }
 
   bool _looping = false;
@@ -163,6 +173,7 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // fractional은 자식 요소를 기준으로 위치가 바뀐다는걸 의미해
             SlideTransition(
               position: _position,
               child: ScaleTransition(
@@ -185,6 +196,7 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
             // tween: 트윈을 사용하면 애니메이션 대상의 시작과 끝을 지정할 수 있어
             // AnimatedBuilder는 최후의 수단으로 사용해야해, explicit(명시적) 애니메이션을 사용한 경우에 말야
             // xxxTransition: Transition으로 끝나는건 explicit 애니메이션이야. 알겠지?
+            // 모든 AnimatedBuilder를 쌓아 만드는건 좋은 생각이 아니야
             // AnimatedBuilder(
             //   // animation: _animationController,
             //   animation: _color,
@@ -250,6 +262,7 @@ class _ExplicitAnimationScreenState extends State<ExplicitAnimationScreen>
               valueListenable: _range,
               builder: (context, value, child) {
                 return Slider(
+                  // value: _value,
                   value: _range.value,
                   onChanged: _onChanged,
                 );
