@@ -9,7 +9,19 @@ class AppleWatchScreen extends StatefulWidget {
   State<AppleWatchScreen> createState() => _AppleWatchScreenState();
 }
 
-class _AppleWatchScreenState extends State<AppleWatchScreen> {
+class _AppleWatchScreenState extends State<AppleWatchScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 2),
+    lowerBound: 0.005,
+    upperBound: 2.0,
+  );
+
+  void _animateValues() {
+    _animationController.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,16 +32,32 @@ class _AppleWatchScreenState extends State<AppleWatchScreen> {
         title: const Text('Apple Watch'),
       ),
       body: Center(
-        child: CustomPaint(
-          painter: AppleWatchPainter(),
-          size: const Size(400, 400),
-        ),
+        child: AnimatedBuilder(
+            animation: _animationController,
+            builder: (context, child) {
+              return CustomPaint(
+                painter: AppleWatchPainter(
+                  progress: _animationController.value,
+                ),
+                size: const Size(400, 400),
+              );
+            }),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _animateValues,
+        child: const Icon(Icons.refresh),
       ),
     );
   }
 }
 
 class AppleWatchPainter extends CustomPainter {
+  final double progress;
+
+  AppleWatchPainter({
+    required this.progress,
+  });
+
   // paint 메서드는 우리가 만드는 것을 색상으로 칠해줘
   // paint는 여러분이 마법을 부릴 장소야. 여러분이 그리고 싶은 모든 모양을 그릴거야.
   @override
@@ -65,6 +93,8 @@ class AppleWatchPainter extends CustomPainter {
       size.width / 2,
     );
 
+    final startingAngle = -0.5 * pi;
+
     // draw red
     final redCirclePaint = Paint()
       ..color = Colors.red.shade400.withOpacity(0.3)
@@ -79,6 +109,8 @@ class AppleWatchPainter extends CustomPainter {
       redCirclePaint,
     );
 
+    final greenCircleRadius = (size.width / 2) * 0.76;
+
     // draw green
     final greenCirclePaint = Paint()
       ..color = Colors.green.shade400.withOpacity(0.3)
@@ -87,7 +119,7 @@ class AppleWatchPainter extends CustomPainter {
 
     canvas.drawCircle(
       center,
-      (size.width / 2) * 0.76,
+      greenCircleRadius,
       greenCirclePaint,
     );
 
@@ -97,9 +129,11 @@ class AppleWatchPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 25;
 
+    final blueCircleRadius = (size.width / 2) * 0.62;
+
     canvas.drawCircle(
       center,
-      (size.width / 2) * 0.62,
+      blueCircleRadius,
       blueCirclePaint,
     );
 
@@ -117,16 +151,59 @@ class AppleWatchPainter extends CustomPainter {
 
     canvas.drawArc(
       redArcRect,
-      -0.5 * pi,
-      1.5 * pi,
+      startingAngle,
+      progress * pi,
       false,
       redArcPaint,
+    );
+
+    // green arc
+    final greenArcRect = Rect.fromCircle(
+      center: center,
+      radius: greenCircleRadius,
+    );
+
+    final greenArcPaint = Paint()
+      ..color = Colors.green.shade400
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 25;
+
+    canvas.drawArc(
+      greenArcRect,
+      startingAngle,
+      progress * pi,
+      false,
+      greenArcPaint,
+    );
+
+    // blue arc
+    final blueArcRect = Rect.fromCircle(
+      center: center,
+      radius: blueCircleRadius,
+    );
+
+    final blueArcPaint = Paint()
+      ..color = Colors.cyan.shade400
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 25;
+
+    canvas.drawArc(
+      blueArcRect,
+      startingAngle,
+      progress * pi,
+      false,
+      blueArcPaint,
     );
   }
 
   // 이건 true 또는 false를 반환해야 하는 메서드야
+  // shouldRepaint가 플러터에게 이 painter가 다시 칠해져야 하는지 여부를 말해주는 것 같아.
+  // 우리가 paint를 새로고침 해야하는 지 말야. 알겠어?
+  // 새로운 값을 받았을 때 이전 값과 현재 값이 다를 때만 비교해서 다시 그리게 할 수도 있어.
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
+  bool shouldRepaint(covariant AppleWatchPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }
