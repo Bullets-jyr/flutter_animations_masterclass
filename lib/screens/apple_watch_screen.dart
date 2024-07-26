@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class AppleWatchScreen extends StatefulWidget {
@@ -43,7 +45,7 @@ class AppleWatchPainter extends CustomPainter {
     // 이제 해야 할 일은 모양의 색상을 선택하는 거야.
     final paint = Paint()..color = Colors.blue;
 
-    canvas.drawRect(rect, paint);
+    // canvas.drawRect(rect, paint);
 
     final circlePaint = Paint()
       ..color = Colors.red
@@ -51,11 +53,74 @@ class AppleWatchPainter extends CustomPainter {
       // ..style = PaintingStyle.fill
       ..strokeWidth = 20;
 
-    canvas.drawCircle(
-      // Offset.zero,
-      Offset(size.width / 2, size.width / 2),
+    // canvas.drawCircle(
+    //   // Offset.zero,
+    //   Offset(size.width / 2, size.width / 2),
+    //   size.width / 2,
+    //   circlePaint,
+    // );
+
+    final center = Offset(
       size.width / 2,
-      circlePaint,
+      size.width / 2,
+    );
+
+    // draw red
+    final redCirclePaint = Paint()
+      ..color = Colors.red.shade400.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 25;
+
+    final redCircleRadius = (size.width / 2) * 0.9;
+
+    canvas.drawCircle(
+      center,
+      redCircleRadius,
+      redCirclePaint,
+    );
+
+    // draw green
+    final greenCirclePaint = Paint()
+      ..color = Colors.green.shade400.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 25;
+
+    canvas.drawCircle(
+      center,
+      (size.width / 2) * 0.76,
+      greenCirclePaint,
+    );
+
+    // draw blue
+    final blueCirclePaint = Paint()
+      ..color = Colors.cyan.shade400.withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 25;
+
+    canvas.drawCircle(
+      center,
+      (size.width / 2) * 0.62,
+      blueCirclePaint,
+    );
+
+    // red arc
+    final redArcRect = Rect.fromCircle(
+      center: center,
+      radius: redCircleRadius,
+    );
+
+    final redArcPaint = Paint()
+      ..color = Colors.red.shade400
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 25;
+
+    canvas.drawArc(
+      redArcRect,
+      -0.5 * pi,
+      1.5 * pi,
+      false,
+      redArcPaint,
     );
   }
 
