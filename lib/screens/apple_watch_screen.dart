@@ -31,8 +31,8 @@ class _AppleWatchScreenState extends State<AppleWatchScreen>
   void _animateValues() {
     // _animationController.forward();
     final newBegin = _progress.value;
-    final random = Random();
-    final newEnd = random.nextDouble() * 2.0;
+    // final random = Random();
+    final newEnd = Random().nextDouble() * 2.0;
     setState(() {
       _progress = Tween(
         begin: newBegin,
